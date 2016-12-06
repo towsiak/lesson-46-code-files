@@ -18,6 +18,8 @@ namespace WindowsFormsApplication5
 
         SqlDataAdapter dataAdapter;//this object here allows us to build the connection between the program and the database
         DataTable table;//table to hold the information so we can fill the datagrid view
+
+
         public BizContacts()
         {
             InitializeComponent();
@@ -49,6 +51,46 @@ namespace WindowsFormsApplication5
             {
                 MessageBox.Show(ex.Message);//show a useful message to the user of the program
             }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            SqlCommand command;//declares a new sql command object
+            //field names in the table
+            string insert = @"insert into BizContacts(Date_Added, Company, Website, Title, First_Name, Last_Name,Address,
+                                                      City,State,Postal_Code,Mobile,Notes) 
+
+                              values(@Date_Added, @Company, @Website, @Title, @First_Name, @Last_Name,@Address,
+                                                      @City,@State,@Postal_Code,@Mobile,@Notes)"; //parameter names
+
+            using (SqlConnection conn = new SqlConnection(connString)) //using allows disposing of low level resources
+            {
+                try
+                {
+                conn.Open();//open the connection
+                command = new SqlCommand(insert, conn);//create the the new sql command object
+                command.Parameters.AddWithValue(@"Date_Added", dateTimePicker1.Value.Date);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Company", txtCompany.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Website", txtWebsite.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Title", txtTitle.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"First_Name", txtFName.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Last_Name", txtLName.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Address", txtAddress.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"City", txtCity.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"State", txtState.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Postal_Code", txtPostalCode.Text);//read value from form and save to table
+                command.Parameters.AddWithValue(@"Mobile", txtMobile.Text);
+                command.Parameters.AddWithValue(@"Notes", txtNotes.Text);
+                command.ExecuteNonQuery();//push stuff into the table
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);//if there is something wrong, show the user a message
+                }
+            }
+            GetData("Select * from BizContacts");
+            dataGridView1.Update();//redraws the data grid view so the new record is visible on the bottom
+
         }
     }
 }
