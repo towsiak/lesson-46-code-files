@@ -19,6 +19,8 @@ namespace WindowsFormsApplication5
         SqlDataAdapter dataAdapter;//this object here allows us to build the connection between the program and the database
         DataTable table;//table to hold the information so we can fill the datagrid view
         SqlCommandBuilder commandBuilder;//declare a new sql command builder object
+        SqlConnection conn;//declares a variable to hold the sql connection
+        string selectionStatement = "Select * from BizContacts";//used throughout so it's placed here
 
         public BizContacts()
         {
@@ -27,15 +29,15 @@ namespace WindowsFormsApplication5
 
         private void BizContacts_Load(object sender, EventArgs e)
         {
-            
+
             cboSearch.SelectedIndex = 0;//first item in combobox is selected when the form loads
             dataGridView1.DataSource = bindingSource1;//sets the source of the data to be displayed in the grid view
-                                        //also binding source encapsulates the data for the form
+                                                      //also binding source encapsulates the data for the form
 
             //line below calls a method called GetData
             //The argument is a string that represents an sql query
             //select * from BizContacts means select all the data from the biz contacts table
-            GetData("Select * from BizContacts");
+            GetData(selectionStatement);
         }
 
         private void GetData(string selectCommand)
@@ -48,9 +50,9 @@ namespace WindowsFormsApplication5
                 dataAdapter.Fill(table);//fill the data table
                 bindingSource1.DataSource = table;//set the data source on the binding source to the table
                 dataGridView1.Columns[0].ReadOnly = true;//this helps prevent the id field from being changed
-                
+
             }
-            catch(SqlException ex)
+            catch (SqlException ex)
             {
                 MessageBox.Show(ex.Message);//show a useful message to the user of the program
             }
@@ -66,7 +68,7 @@ namespace WindowsFormsApplication5
                               values(@Date_Added, @Company, @Website, @Title, @First_Name, @Last_Name,@Address,
                                                       @City,@State,@Postal_Code,@Mobile,@Notes)"; //parameter names
 
-            using (SqlConnection conn = new SqlConnection(connString)) //using allows disposing of low level resources
+            using (conn = new SqlConnection(connString)) //using allows disposing of low level resources
             {
                 try
                 {
@@ -91,7 +93,7 @@ namespace WindowsFormsApplication5
                     MessageBox.Show(ex.Message);//if there is something wrong, show the user a message
                 }
             }
-            GetData("Select * from BizContacts");
+            GetData(selectionStatement);
             dataGridView1.Update();//redraws the data grid view so the new record is visible on the bottom
 
         }
@@ -106,10 +108,44 @@ namespace WindowsFormsApplication5
                 dataAdapter.Update(table);//actually updates the data base
                 MessageBox.Show("Update Successful!");//confirms to user update is saved to actual table in sql server
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);//show message to the user
             }
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            
+            DataGridViewRow row = dataGridView1.CurrentCell.OwningRow;//grab a reference to the current row
+            string value = row.Cells["ID"].Value.ToString();//grab the value from the id field of the selected record
+            string fname = row.Cells["First_Name"].Value.ToString();//grab the value from the field name field of the selected record
+            string lname = row.Cells["Last_Name"].Value.ToString();//grab the value from the last name field of the selected record
+            DialogResult result = MessageBox.Show("Do you really want to delete " + fname + " " + lname + ", record " + value, "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            string deleteState=@"Delete from BizContacts where id = '"+value+"'";//this is the sql to delete the records from the sql table
+
+            if(result==DialogResult.Yes) //check whether user really wants to delete records
+            {
+                using (conn = new SqlConnection(connString))
+                {
+                    try
+                    {
+                        conn.Open();//try to open connection
+                        SqlCommand comm = new SqlCommand(deleteState, conn);
+                        comm.ExecuteNonQuery();//this line actually causes the deletion to run
+                        GetData(selectionStatement);//get the data again
+                        dataGridView1.Update();//redraw the data grid  with updated information
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);//runs when something is wrong with the connection
+                    }
+                }
+            }
+        }
     }
 }
+
+//centralize the string that is the call to get data
+//centralize the connection declaration so it can be reused
