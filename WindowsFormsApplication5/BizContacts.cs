@@ -115,16 +115,16 @@ namespace WindowsFormsApplication5
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            
+
             DataGridViewRow row = dataGridView1.CurrentCell.OwningRow;//grab a reference to the current row
             string value = row.Cells["ID"].Value.ToString();//grab the value from the id field of the selected record
             string fname = row.Cells["First_Name"].Value.ToString();//grab the value from the field name field of the selected record
             string lname = row.Cells["Last_Name"].Value.ToString();//grab the value from the last name field of the selected record
             DialogResult result = MessageBox.Show("Do you really want to delete " + fname + " " + lname + ", record " + value, "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            string deleteState=@"Delete from BizContacts where id = '"+value+"'";//this is the sql to delete the records from the sql table
+            string deleteState = @"Delete from BizContacts where id = '" + value + "'";//this is the sql to delete the records from the sql table
 
-            if(result==DialogResult.Yes) //check whether user really wants to delete records
+            if (result == DialogResult.Yes) //check whether user really wants to delete records
             {
                 using (conn = new SqlConnection(connString))
                 {
@@ -136,7 +136,7 @@ namespace WindowsFormsApplication5
                         GetData(selectionStatement);//get the data again
                         dataGridView1.Update();//redraw the data grid  with updated information
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message);//runs when something is wrong with the connection
                     }
@@ -146,50 +146,21 @@ namespace WindowsFormsApplication5
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            GetData(selectionStatement);//refill the data and the datagridview
-            IEnumerable<DataRow> query;//this variable holds the rows that contains the matched records
-            switch(cboSearch.SelectedItem.ToString())
+            switch(cboSearch.SelectedItem.ToString())//present because we have a combo box
             {
                 case "First Name":
-                    query = SearchFor("First_Name");//call SearchFor against the first name field
-                    if (query.Count() > 0)//ensures that the query actually has some records
-                        bindingSource1.DataSource = table = query.CopyToDataTable();
+                    //line below picks out records that contain whatever the text is typed into the search box
+                    //this text can be at the beginning of the first name, in the middle or the end, same below for the other cases
+                    GetData("select * from bizcontacts where lower(first_name) like '%" + txtSearch.Text.ToLower() + "%'");
                     break;
                 case "Last Name":
-                    query = SearchFor("Last_Name");//call SearchFor against the first name field
-                    if (query.Count() > 0)//ensures that the query actually has some records
-                        bindingSource1.DataSource = table = query.CopyToDataTable();
+                    GetData("select * from bizcontacts where lower(last_name) like '%" + txtSearch.Text.ToLower() + "%'");
                     break;
-
+                case "Company":
+                    GetData("select * from bizcontacts where lower(company) like '%" + txtSearch.Text.ToLower() + "%'");
+                    break;
             }
-        }
-        private IEnumerable<DataRow> SearchFor(string fieldName)
-        {
-            //code below allows us to examine our table essentially as a collection of rows
-            //grab each row, look at the field specified by fieldName inside that
-            //if it containcs the value we're searching for, it qualifies and we can displays this as a matched record
-            return from contacts in table.AsEnumerable()
-                   where contacts.Field<string>(fieldName).ToLower().Contains(txtSearch.Text.ToLower())
-                   select contacts;
         }
     }
 }
-
-
-//centralize the string that is the call to get data
-//centralize the connection declaration so it can be reused
-//find matching records, make a modification, make sure the modification is saved to the underlying sql table
-
-            //switch (cboSearch.SelectedItem.ToString())
-            //    {
-            //        case "First Name":
-            //                GetData("select * from BizContacts where First_Name like '%" + txtSearch.Text + "%'");
-            //              break;
-            //        case "Last Name":
-            //                GetData("select * from BizContacts where Last_Name like '%" + txtSearch.Text + "%'");
-            //            break;
-            //        case "Company":
-            //             GetData("select * from BizContacts where Company like '%" + txtSearch.Text + "%'");
-            //         break;
-
-            //}
+ 
