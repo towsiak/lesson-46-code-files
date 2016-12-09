@@ -50,7 +50,6 @@ namespace WindowsFormsApplication5
                 dataAdapter.Fill(table);//fill the data table
                 bindingSource1.DataSource = table;//set the data source on the binding source to the table
                 dataGridView1.Columns[0].ReadOnly = true;//this helps prevent the id field from being changed
-
             }
             catch (SqlException ex)
             {
@@ -144,8 +143,53 @@ namespace WindowsFormsApplication5
                 }
             }
         }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            GetData(selectionStatement);//refill the data and the datagridview
+            IEnumerable<DataRow> query;//this variable holds the rows that contains the matched records
+            switch(cboSearch.SelectedItem.ToString())
+            {
+                case "First Name":
+                    query = SearchFor("First_Name");//call SearchFor against the first name field
+                    if (query.Count() > 0)//ensures that the query actually has some records
+                        bindingSource1.DataSource = table = query.CopyToDataTable();
+                    break;
+                case "Last Name":
+                    query = SearchFor("Last_Name");//call SearchFor against the first name field
+                    if (query.Count() > 0)//ensures that the query actually has some records
+                        bindingSource1.DataSource = table = query.CopyToDataTable();
+                    break;
+
+            }
+        }
+        private IEnumerable<DataRow> SearchFor(string fieldName)
+        {
+            //code below allows us to examine our table essentially as a collection of rows
+            //grab each row, look at the field specified by fieldName inside that
+            //if it containcs the value we're searching for, it qualifies and we can displays this as a matched record
+            return from contacts in table.AsEnumerable()
+                   where contacts.Field<string>(fieldName).ToLower().Contains(txtSearch.Text.ToLower())
+                   select contacts;
+        }
     }
 }
 
+
 //centralize the string that is the call to get data
 //centralize the connection declaration so it can be reused
+//find matching records, make a modification, make sure the modification is saved to the underlying sql table
+
+            //switch (cboSearch.SelectedItem.ToString())
+            //    {
+            //        case "First Name":
+            //                GetData("select * from BizContacts where First_Name like '%" + txtSearch.Text + "%'");
+            //              break;
+            //        case "Last Name":
+            //                GetData("select * from BizContacts where Last_Name like '%" + txtSearch.Text + "%'");
+            //            break;
+            //        case "Company":
+            //             GetData("select * from BizContacts where Company like '%" + txtSearch.Text + "%'");
+            //         break;
+
+            //}
