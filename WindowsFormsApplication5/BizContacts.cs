@@ -170,7 +170,7 @@ namespace WindowsFormsApplication5
 
         private void btnGetImage_Click(object sender, EventArgs e)
         {
-            if(dlgOpenImage.ShowDialog()==DialogResult.OK)//show box for selecting image from drive
+            if(dlgOpenImage.ShowDialog()==DialogResult.OK)//use if in case user cancels getting image and FileName is blank
               pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
         }
 
