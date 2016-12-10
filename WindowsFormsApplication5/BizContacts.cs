@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data.Sql;
+using System.IO;//needed for File use
+
 
 namespace WindowsFormsApplication5
 {
@@ -62,10 +64,10 @@ namespace WindowsFormsApplication5
             SqlCommand command;//declares a new sql command object
             //field names in the table
             string insert = @"insert into BizContacts(Date_Added, Company, Website, Title, First_Name, Last_Name,Address,
-                                                      City,State,Postal_Code,Mobile,Notes) 
+                                                      City,State,Postal_Code,Mobile,Notes,Image) 
 
                               values(@Date_Added, @Company, @Website, @Title, @First_Name, @Last_Name,@Address,
-                                                      @City,@State,@Postal_Code,@Mobile,@Notes)"; //parameter names
+                                                      @City,@State,@Postal_Code,@Mobile,@Notes,@Image)"; //parameter names
 
             using (conn = new SqlConnection(connString)) //using allows disposing of low level resources
             {
@@ -85,6 +87,10 @@ namespace WindowsFormsApplication5
                     command.Parameters.AddWithValue(@"Postal_Code", txtPostalCode.Text);//read value from form and save to table
                     command.Parameters.AddWithValue(@"Mobile", txtMobile.Text);
                     command.Parameters.AddWithValue(@"Notes", txtNotes.Text);
+                    if(dlgOpenImage.FileName != "") //check whether file name is not empty
+                      command.Parameters.AddWithValue(@"Image", File.ReadAllBytes(dlgOpenImage.FileName));//convert images to bytes for saving
+                    else
+                        command.Parameters.Add("@Image", SqlDbType.VarBinary).Value = DBNull.Value;//save null to database 
                     command.ExecuteNonQuery();//push stuff into the table
                 }
                 catch (Exception ex)
@@ -160,6 +166,20 @@ namespace WindowsFormsApplication5
                     GetData("select * from bizcontacts where lower(company) like '%" + txtSearch.Text.ToLower() + "%'");
                     break;
             }
+        }
+
+        private void btnGetImage_Click(object sender, EventArgs e)
+        {
+            dlgOpenImage.ShowDialog();//show box for selecting image from drive
+            pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+            Form frm = new Form();//make a new form
+            frm.BackgroundImage = pictureBox1.Image;//set background image of new, preview form of image
+            frm.Size = pictureBox1.Image.Size;//sets the size of the form to the size of the image so the image is wholly visible
+            frm.Show();//show form with image
         }
     }
 }

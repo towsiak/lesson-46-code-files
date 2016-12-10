@@ -61,8 +61,12 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.btnGetImage = new System.Windows.Forms.Button();
+            this.dlgOpenImage = new System.Windows.Forms.OpenFileDialog();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -268,7 +272,7 @@
             this.txtNotes.Location = new System.Drawing.Point(563, 94);
             this.txtNotes.Multiline = true;
             this.txtNotes.Name = "txtNotes";
-            this.txtNotes.Size = new System.Drawing.Size(278, 216);
+            this.txtNotes.Size = new System.Drawing.Size(278, 73);
             this.txtNotes.TabIndex = 23;
             // 
             // txtSearch
@@ -349,6 +353,26 @@
             this.dataGridView1.TabIndex = 31;
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(563, 173);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(225, 225);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 32;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DoubleClick += new System.EventHandler(this.pictureBox1_DoubleClick);
+            // 
+            // btnGetImage
+            // 
+            this.btnGetImage.Location = new System.Drawing.Point(461, 173);
+            this.btnGetImage.Name = "btnGetImage";
+            this.btnGetImage.Size = new System.Drawing.Size(75, 23);
+            this.btnGetImage.TabIndex = 33;
+            this.btnGetImage.Text = "Get Picture";
+            this.btnGetImage.UseVisualStyleBackColor = true;
+            this.btnGetImage.Click += new System.EventHandler(this.btnGetImage_Click);
+            // 
             // bindingSource1
             // 
             this.bindingSource1.DataSource = typeof(WindowsFormsApplication5.BizContacts);
@@ -358,6 +382,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(969, 724);
+            this.Controls.Add(this.btnGetImage);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnAdd);
@@ -394,6 +420,7 @@
             this.Text = "Business Contacts";
             this.Load += new System.EventHandler(this.BizContacts_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -435,5 +462,8 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button btnGetImage;
+        private System.Windows.Forms.OpenFileDialog dlgOpenImage;
     }
 }
