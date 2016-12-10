@@ -184,3 +184,6 @@ namespace WindowsFormsApplication5
     }
 }
  
+//couple changes to make: 
+//move the SQLCommandBuilder down to the method where it's used
+//wrap dlgOpen.Image.Show() in an if so the code does not crash when user cancels getting image
