@@ -170,8 +170,8 @@ namespace WindowsFormsApplication5
 
         private void btnGetImage_Click(object sender, EventArgs e)
         {
-            dlgOpenImage.ShowDialog();//show box for selecting image from drive
-            pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
+            if(dlgOpenImage.ShowDialog()==DialogResult.OK)//show box for selecting image from drive
+              pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
         }
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
