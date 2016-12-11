@@ -10,7 +10,8 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data.Sql;
 using System.IO;//needed for File use
-
+using System.Diagnostics;//needed to open up excel from our code Process.Start
+using Microsoft.Office.Interop.Excel;//needed to make an excel object in our code
 
 namespace WindowsFormsApplication5
 {
@@ -19,8 +20,7 @@ namespace WindowsFormsApplication5
         string connString = @"Data Source=DESKTOP-4L6NSGO\SQLEXPRESS;Initial Catalog=AddressBook;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         SqlDataAdapter dataAdapter;//this object here allows us to build the connection between the program and the database
-        DataTable table;//table to hold the information so we can fill the datagrid view
-        SqlCommandBuilder commandBuilder;//declare a new sql command builder object
+        System.Data.DataTable table;//table to hold the information so we can fill the datagrid view
         SqlConnection conn;//declares a variable to hold the sql connection
         string selectionStatement = "Select * from BizContacts";//used throughout so it's placed here
 
@@ -47,7 +47,7 @@ namespace WindowsFormsApplication5
             try
             {
                 dataAdapter = new SqlDataAdapter(selectCommand, connString);//pass in the select command and the connection string
-                table = new DataTable();//make a new data table object
+                table = new System.Data.DataTable();//make a new data table object
                 table.Locale = System.Globalization.CultureInfo.InvariantCulture;
                 dataAdapter.Fill(table);//fill the data table
                 bindingSource1.DataSource = table;//set the data source on the binding source to the table
@@ -105,7 +105,7 @@ namespace WindowsFormsApplication5
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            commandBuilder = new SqlCommandBuilder(dataAdapter);
+            SqlCommandBuilder  commandBuilder = new SqlCommandBuilder(dataAdapter);
             dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();//get the update command
             try
             {
@@ -170,8 +170,8 @@ namespace WindowsFormsApplication5
 
         private void btnGetImage_Click(object sender, EventArgs e)
         {
-            if(dlgOpenImage.ShowDialog()==DialogResult.OK)//use if in case user cancels getting image and FileName is blank
-              pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
+              if(dlgOpenImage.ShowDialog()==DialogResult.OK)//use if in case user cancels getting image and FileName is blank
+                  pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
         }
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
@@ -179,11 +179,57 @@ namespace WindowsFormsApplication5
             Form frm = new Form();//make a new form
             frm.BackgroundImage = pictureBox1.Image;//set background image of new, preview form of image
             frm.Size = pictureBox1.Image.Size;//sets the size of the form to the size of the image so the image is wholly visible
-            frm.Show();//show form with image
+            frm.Show();//show form with image;
+        }
+
+        private void btnExportOpen_Click(object sender, EventArgs e)
+        {
+            _Application excel = new Microsoft.Office.Interop.Excel.Application();//make a new excel object
+            _Workbook workbook = excel.Workbooks.Add(Type.Missing);//make a work book
+            _Worksheet worksheet = null;//make a work sheet and for now set it to null
+            try
+            {
+                worksheet = workbook.ActiveSheet;//set active sheet
+                worksheet.Name = "Business Contacts";
+                //because both data grids and excel sheets are tabular, use nested loops to write from one to the other
+                for (int rowIndex = 0; rowIndex < dataGridView1.Rows.Count - 1; rowIndex++)//this loop controls the row number
+                {
+                    for (int colIndex = 0; colIndex < dataGridView1.Columns.Count; colIndex++)//this is needed to go over the columns of each row
+                    {
+                        if (rowIndex == 0)//because the first row at index 0 is the header row
+                        {
+                            //in Excel, row and column indexes begin at 1,1, not 0,0
+                            //write out the header texts from the grid view to excel sheet
+                            worksheet.Cells[rowIndex + 1, colIndex + 1] = dataGridView1.Columns[colIndex].HeaderText;
+
+                        }
+                        else
+                        {
+                            //fix the row index at 1, then change the column index over its possible values from 0 to 5
+                            worksheet.Cells[rowIndex + 1, colIndex + 1] = dataGridView1.Rows[rowIndex].Cells[colIndex].Value.ToString();
+                        }
+                    }
+
+                    
+                }
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK) //user clicks ok
+                    {
+                        workbook.SaveAs(saveFileDialog1.FileName);//save file to drive
+                        Process.Start("excel.exe", saveFileDialog1.FileName);//load excel with the exported file
+                    }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);//show message in case of errors
+            }
+            finally //this code always runs
+            {
+                excel.Quit();
+                workbook = null;//make workbook object null
+                excel = null;
+            }
         }
     }
 }
+
  
-//couple changes to make: 
-//move the SQLCommandBuilder down to the method where it's used
-//wrap dlgOpen.Image.Show() in an if so the code does not crash when user cancels getting image

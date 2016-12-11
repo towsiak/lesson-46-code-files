@@ -64,7 +64,9 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnGetImage = new System.Windows.Forms.Button();
             this.dlgOpenImage = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.btnExportOpen = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -349,7 +351,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(17, 470);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(923, 242);
+            this.dataGridView1.Size = new System.Drawing.Size(988, 242);
             this.dataGridView1.TabIndex = 31;
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             // 
@@ -373,15 +375,30 @@
             this.btnGetImage.UseVisualStyleBackColor = true;
             this.btnGetImage.Click += new System.EventHandler(this.btnGetImage_Click);
             // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "Excel Files  (*.xlsx)|*.xlsx";
+            // 
             // bindingSource1
             // 
             this.bindingSource1.DataSource = typeof(WindowsFormsApplication5.BizContacts);
+            // 
+            // btnExportOpen
+            // 
+            this.btnExportOpen.Location = new System.Drawing.Point(847, 94);
+            this.btnExportOpen.Name = "btnExportOpen";
+            this.btnExportOpen.Size = new System.Drawing.Size(150, 23);
+            this.btnExportOpen.TabIndex = 34;
+            this.btnExportOpen.Text = "Export/Open Excel";
+            this.btnExportOpen.UseVisualStyleBackColor = true;
+            this.btnExportOpen.Click += new System.EventHandler(this.btnExportOpen_Click);
             // 
             // BizContacts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(969, 724);
+            this.ClientSize = new System.Drawing.Size(1152, 724);
+            this.Controls.Add(this.btnExportOpen);
             this.Controls.Add(this.btnGetImage);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.dataGridView1);
@@ -465,5 +482,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnGetImage;
         private System.Windows.Forms.OpenFileDialog dlgOpenImage;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Button btnExportOpen;
     }
 }
