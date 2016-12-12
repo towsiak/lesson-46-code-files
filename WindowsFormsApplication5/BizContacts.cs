@@ -87,8 +87,8 @@ namespace WindowsFormsApplication5
                     command.Parameters.AddWithValue(@"Postal_Code", txtPostalCode.Text);//read value from form and save to table
                     command.Parameters.AddWithValue(@"Mobile", txtMobile.Text);
                     command.Parameters.AddWithValue(@"Notes", txtNotes.Text);
-                    if(dlgOpenImage.FileName != "") //check whether file name is not empty
-                      command.Parameters.AddWithValue(@"Image", File.ReadAllBytes(dlgOpenImage.FileName));//convert images to bytes for saving
+                    if (dlgOpenImage.FileName != "") //check whether file name is not empty
+                        command.Parameters.AddWithValue(@"Image", File.ReadAllBytes(dlgOpenImage.FileName));//convert images to bytes for saving
                     else
                         command.Parameters.Add("@Image", SqlDbType.VarBinary).Value = DBNull.Value;//save null to database 
                     command.ExecuteNonQuery();//push stuff into the table
@@ -105,7 +105,7 @@ namespace WindowsFormsApplication5
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            SqlCommandBuilder  commandBuilder = new SqlCommandBuilder(dataAdapter);
+            SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
             dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();//get the update command
             try
             {
@@ -152,7 +152,7 @@ namespace WindowsFormsApplication5
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            switch(cboSearch.SelectedItem.ToString())//present because we have a combo box
+            switch (cboSearch.SelectedItem.ToString())//present because we have a combo box
             {
                 case "First Name":
                     //line below picks out records that contain whatever the text is typed into the search box
@@ -170,8 +170,8 @@ namespace WindowsFormsApplication5
 
         private void btnGetImage_Click(object sender, EventArgs e)
         {
-              if(dlgOpenImage.ShowDialog()==DialogResult.OK)//use if in case user cancels getting image and FileName is blank
-                  pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
+            if (dlgOpenImage.ShowDialog() == DialogResult.OK)//use if in case user cancels getting image and FileName is blank
+                pictureBox1.Load(dlgOpenImage.FileName);//loads image from drive using the file name property of the dialog box
         }
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
@@ -210,13 +210,12 @@ namespace WindowsFormsApplication5
                         }
                     }
 
-                    
                 }
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK) //user clicks ok
-                    {
-                        workbook.SaveAs(saveFileDialog1.FileName);//save file to drive
-                        Process.Start("excel.exe", saveFileDialog1.FileName);//load excel with the exported file
-                    }
+                {
+                    workbook.SaveAs(saveFileDialog1.FileName);//save file to drive
+                    Process.Start("excel.exe", saveFileDialog1.FileName);//load excel with the exported file
+                }
             }
             catch (Exception ex)
             {
@@ -227,6 +226,23 @@ namespace WindowsFormsApplication5
                 excel.Quit();
                 workbook = null;//make workbook object null
                 excel = null;
+            }
+        }
+
+        private void btnSaveToText_Click(object sender, EventArgs e)
+        {
+            if(saveFileDialog1.ShowDialog()==DialogResult.OK)//check whether somebody has clicked the ok button
+            {
+                using (StreamWriter sw = new StreamWriter(saveFileDialog1.FileName))
+                {
+                    foreach(DataGridViewRow row in dataGridView1.Rows) //grab each row in the data grid view
+                    {
+                        foreach (DataGridViewCell cell in row.Cells) //once you have a row grabbed, go through the cells of that row
+                            sw.Write(cell.Value);//this line actually write the value to a text file
+                        sw.WriteLine();//this pushes the cursor to the next line
+                    }
+                }
+                Process.Start("notepad.exe", saveFileDialog1.FileName);//open file in notepad after the file is written to the drive
             }
         }
     }
