@@ -235,17 +235,21 @@ namespace WindowsFormsApplication5
             {
                 using (StreamWriter sw = new StreamWriter(saveFileDialog1.FileName))
                 {
-                    foreach(DataGridViewRow row in dataGridView1.Rows) //grab each row in the data grid view
+                    foreach (DataGridViewColumn col in dataGridView1.Columns) //this is not in the video, but this code writes the headers to the file
+                        sw.Write(col.HeaderText);
+
+                    foreach (DataGridViewRow row in dataGridView1.Rows) //grab each row in the data grid view
                     {
-                        foreach (DataGridViewCell cell in row.Cells) //once you have a row grabbed, go through the cells of that row
-                            sw.Write(cell.Value);//this line actually write the value to a text file
+                        foreach (DataGridViewCell cell in row.Cells)
+                                sw.Write(cell.Value);
                         sw.WriteLine();//this pushes the cursor to the next line
                     }
                 }
                 Process.Start("notepad.exe", saveFileDialog1.FileName);//open file in notepad after the file is written to the drive
             }
+
         }
-    }
+     }
 }
 
- 
+
