@@ -268,8 +268,20 @@ namespace WindowsFormsApplication5
                 {
                     for (int j = 0; j < dataGridView1.Columns.Count; j++)//this loop is needed to step through the columns of each row
                         //line below runs several times, each time writing the cell value from the grid to word
-                        wdTable.Cell(i + 1, j + 1).Range.InsertAfter(dataGridView1.Rows[i].Cells[j].Value.ToString());
 
+                        if (i== 0)//because the first row at index 0 is the header row
+                        {
+                         
+                            //write out the header texts from the grid view to word table
+                            //line below runs as many times as there are cells whose text needs to be copied out to word
+                            wdTable.Cell(i + 1, j + 1).Range.InsertAfter(dataGridView1.Columns[j].HeaderText);
+
+                        }
+                        else
+                        {
+                            //line below runs when data, not headers, is copied from the datagridview to the word table
+                           wdTable.Cell(i + 1 , j+1).Range.InsertAfter(dataGridView1.Rows[i].Cells[j].Value.ToString());
+                        }
                 }
                 if(saveFileDialog1.ShowDialog()==DialogResult.OK)
                 {
