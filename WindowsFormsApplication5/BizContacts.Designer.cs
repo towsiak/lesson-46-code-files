@@ -66,8 +66,9 @@
             this.dlgOpenImage = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btnExportOpen = new System.Windows.Forms.Button();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.btnSaveToText = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.btnOpenWord = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -378,7 +379,7 @@
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.Filter = "Excel Files  (*.xlsx)|*.xlsx|Text Files (*.txt)|*.txt";
+            this.saveFileDialog1.Filter = "Excel Files  (*.xlsx)|*.xlsx|Text Files (*.txt)|*.txt|Word Files (*.docx)|*.docx";
             // 
             // btnExportOpen
             // 
@@ -390,10 +391,6 @@
             this.btnExportOpen.UseVisualStyleBackColor = true;
             this.btnExportOpen.Click += new System.EventHandler(this.btnExportOpen_Click);
             // 
-            // bindingSource1
-            // 
-            this.bindingSource1.DataSource = typeof(WindowsFormsApplication5.BizContacts);
-            // 
             // btnSaveToText
             // 
             this.btnSaveToText.Location = new System.Drawing.Point(848, 124);
@@ -404,11 +401,26 @@
             this.btnSaveToText.UseVisualStyleBackColor = true;
             this.btnSaveToText.Click += new System.EventHandler(this.btnSaveToText_Click);
             // 
+            // bindingSource1
+            // 
+            this.bindingSource1.DataSource = typeof(WindowsFormsApplication5.BizContacts);
+            // 
+            // btnOpenWord
+            // 
+            this.btnOpenWord.Location = new System.Drawing.Point(847, 153);
+            this.btnOpenWord.Name = "btnOpenWord";
+            this.btnOpenWord.Size = new System.Drawing.Size(150, 23);
+            this.btnOpenWord.TabIndex = 36;
+            this.btnOpenWord.Text = "Open In Word";
+            this.btnOpenWord.UseVisualStyleBackColor = true;
+            this.btnOpenWord.Click += new System.EventHandler(this.btnOpenWord_Click);
+            // 
             // BizContacts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1152, 724);
+            this.ClientSize = new System.Drawing.Size(1022, 724);
+            this.Controls.Add(this.btnOpenWord);
             this.Controls.Add(this.btnSaveToText);
             this.Controls.Add(this.btnExportOpen);
             this.Controls.Add(this.btnGetImage);
@@ -497,5 +509,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button btnExportOpen;
         private System.Windows.Forms.Button btnSaveToText;
+        private System.Windows.Forms.Button btnOpenWord;
     }
 }

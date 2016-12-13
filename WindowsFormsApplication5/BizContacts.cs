@@ -12,6 +12,7 @@ using System.Data.Sql;
 using System.IO;//needed for File use
 using System.Diagnostics;//needed to open up excel from our code Process.Start
 using Microsoft.Office.Interop.Excel;//needed to make an excel object in our code
+using Microsoft.Office.Interop.Word;
 
 namespace WindowsFormsApplication5
 {
@@ -184,7 +185,7 @@ namespace WindowsFormsApplication5
 
         private void btnExportOpen_Click(object sender, EventArgs e)
         {
-            _Application excel = new Microsoft.Office.Interop.Excel.Application();//make a new excel object
+            Microsoft.Office.Interop.Excel._Application excel = new Microsoft.Office.Interop.Excel.Application();//make a new excel object
             _Workbook workbook = excel.Workbooks.Add(Type.Missing);//make a work book
             _Worksheet worksheet = null;//make a work sheet and for now set it to null
             try
@@ -224,7 +225,7 @@ namespace WindowsFormsApplication5
             finally //this code always runs
             {
                 excel.Quit();
-                workbook = null;//make workbook object null
+                 workbook = null;//make workbook object null
                 excel = null;
             }
         }
@@ -235,13 +236,14 @@ namespace WindowsFormsApplication5
             {
                 using (StreamWriter sw = new StreamWriter(saveFileDialog1.FileName))
                 {
-                    foreach (DataGridViewColumn col in dataGridView1.Columns) //this is not in the video, but this code writes the headers to the file
+                 
+                  foreach (DataGridViewColumn col in dataGridView1.Columns) //this is not in the video, but this code writes the headers to the file
                         sw.Write(col.HeaderText);
 
                     foreach (DataGridViewRow row in dataGridView1.Rows) //grab each row in the data grid view
                     {
                         foreach (DataGridViewCell cell in row.Cells)
-                                sw.Write(cell.Value);
+                            sw.Write(cell.Value);
                         sw.WriteLine();//this pushes the cursor to the next line
                     }
                 }
@@ -249,7 +251,44 @@ namespace WindowsFormsApplication5
             }
 
         }
-     }
+
+        private void btnOpenWord_Click(object sender, EventArgs e)
+        {
+            Microsoft.Office.Interop.Word._Application word = new Microsoft.Office.Interop.Word.Application();//make a new word object
+            Document doc = word.Documents.Add();//make a new document
+            Microsoft.Office.Interop.Word.Range rng = doc.Range(0, 0);
+            Table wdTable = doc.Tables.Add(rng, dataGridView1.Rows.Count, dataGridView1.Columns.Count);//make anew table based on our data grid view
+            wdTable.Borders.OutsideLineStyle = WdLineStyle.wdLineStyleDouble;//make a thick outer border
+            wdTable.Borders.InsideLineStyle = WdLineStyle.wdLineStyleSingle;//mkae the cell lines thin
+            try
+            {
+                doc = word.ActiveDocument;//make an active document in word
+                //i is the row index from the data grid view
+                for(int i=0;i<dataGridView1.Rows.Count-1;i++)
+                {
+                    for (int j = 0; j < dataGridView1.Columns.Count; j++)//this loop is needed to step through the columns of each row
+                        //line below runs several times, each time writing the cell value from the grid to word
+                        wdTable.Cell(i + 1, j + 1).Range.InsertAfter(dataGridView1.Rows[i].Cells[j].Value.ToString());
+
+                }
+                if(saveFileDialog1.ShowDialog()==DialogResult.OK)
+                {
+                    doc.SaveAs(saveFileDialog1.FileName);//save file to drive
+                    Process.Start("winword.exe", saveFileDialog1.FileName);//open the document in word after the table is made
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);//show a box with a message if there is an error
+            }
+            finally
+            {
+                word.Quit();//quit word
+                word = null;
+                doc = null;//clean up the word object and document object
+            }
+        }
+    }
 }
 
 
